@@ -66,9 +66,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main class="container mx-auto p-4">
         <div class="flex justify-between items-center mb-6">
             <h1 class="text-2xl font-bold text-gray-800">Edit Transaksi</h1>
-            <a href="transactions.php" class="text-blue-600 hover:text-blue-800">
-                <i class="fas fa-arrow-left mr-1"></i> Kembali
-            </a>
+                <a href="transactions.php" class="col-span-2 sm:col-span-1 bg-white border border-blue-600 text-blue-600 px-3 py-1.5 sm:px-4 sm:py-2 rounded-md hover:bg-blue-50 transition text-sm sm:text-base text-center">
+                    <i class="fas fa-arrow-left mr-1 sm:mr-2"></i> Kembali
+                </a>
         </div>
         
         <div class="bg-white rounded-lg shadow-md p-6 animate__animated animate__fadeIn">

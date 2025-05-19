@@ -2,6 +2,9 @@
 require_once __DIR__ . '/includes/auth_check.php';
 requireAdmin(); // Pastikan hanya admin yang bisa akses
 
+// Set timezone ke Jakarta, Indonesia
+date_default_timezone_set('Asia/Jakarta');
+
 // Ambil data transaksi
 $transactions = $pdo->query("
     SELECT t.*, u.name AS user_name, u.email 
@@ -44,7 +47,7 @@ echo '<table>
             <td colspan="7" class="title">Laporan Bank Sampah</td>
         </tr>
         <tr>
-            <td colspan="7">Tanggal Export: '.date('d/m/Y H:i:s').'</td>
+            <td colspan="7">Tanggal Export: '.date('d/m/Y H:i:s').' WIB</td>
         </tr>
     </table><br>';
 
@@ -90,4 +93,3 @@ foreach ($transactions as $t) {
 
 echo '</table></body></html>';
 exit;
-

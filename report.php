@@ -8,7 +8,7 @@ $reports = $pdo->prepare("
     SELECT 
         DATE_FORMAT(tanggal, '%Y-%m') AS bulan,
         SUM(berat) AS total_berat,
-        SUM(debit) as total_debit,
+        SUM(debit - kredit) as total_saldo,
         COUNT(*) as total_transaksi
     FROM transactions
     WHERE user_id = ?
@@ -21,7 +21,7 @@ $report_data = $reports->fetchAll();
 // Hitung statistik
 $stats = [
     'total_berat' => array_sum(array_column($report_data, 'total_berat')),
-    'total_saldo' => array_sum(array_column($report_data, 'total_debit'))
+    'total_saldo' => array_sum(array_column($report_data, 'total_saldo'))
 ];
 
 // Buat PDF jika parameter cetak ada
@@ -92,7 +92,7 @@ if (isset($_GET['cetak'])) {
     foreach($report_data as $report) {
         $pdf->Cell(50, 7, date('F Y', strtotime($report['bulan'].'-01')), 1, 0, 'L');
         $pdf->Cell(40, 7, number_format($report['total_berat'], 0, ',', '.'), 1, 0, 'R');
-        $pdf->Cell(50, 7, 'Rp '.number_format($report['total_debit'], 0, ',', '.'), 1, 0, 'R');
+        $pdf->Cell(50, 7, 'Rp '.number_format($report['total_saldo'], 0, ',', '.'), 1, 0, 'R');
         $pdf->Cell(30, 7, $report['total_transaksi'].'x', 1, 1, 'C');
     }
     
@@ -208,9 +208,9 @@ if (isset($_GET['cetak'])) {
                 </div>
                 <div class="mt-3">
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: <?= min(100, $stats['total_berat'] / 10000 * 100) ?>%"></div>
+                        <div class="progress-fill" style="width: <?= min(100, $stats['total_berat'] / 500000 * 100) ?>%"></div>
                     </div>
-                    <p class="text-xs text-gray-500 mt-1"><?= min(100, $stats['total_berat'] / 10000 * 100) ?>% dari target 10kg</p>
+                    <p class="text-xs text-gray-500 mt-1"><?= min(100, $stats['total_berat'] / 500000 * 100) ?>% dari target 500kg</p>
                 </div>
             </div>
 
@@ -234,11 +234,26 @@ if (isset($_GET['cetak'])) {
             </div>
 
             <!-- Card Bulan Aktif -->
-            <div class="report-card bg-white rounded-lg p-4 sm:p-6 shadow-sm">
+            <div class="report-card bg-white rounded-lg p-4 sm:p-p-6 shadow-sm">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-gray-500 text-sm">Total Bulan Aktif</p>
-                        <h3 class="text-xl sm:text-2xl font-bold mt-1"><?= count($report_data) ?> <span class="text-xs sm:text-sm">bulan</span></h3>
+                        <?php
+                        // Inisialisasi variabel
+                        $total_bulan_aktif = 0;
+                        $rata_berat = 0;
+                        
+                        // Cek apakah $report_data ada dan tidak kosong
+                        if (isset($report_data) && is_array($report_data) && !empty($report_data)) {
+                            $total_bulan_aktif = count($report_data);
+                            
+                            // Hitung rata-rata berat per bulan
+                            if (isset($stats['total_berat']) && $total_bulan_aktif > 0) {
+                                $rata_berat = round($stats['total_berat'] / ($total_bulan_aktif * 1000), 1);
+                            }
+                        }
+                        ?>
+                        <h3 class="text-xl sm:text-2xl font-bold mt-1"><?= $total_bulan_aktif ?> <span class="text-xs sm:text-sm">bulan</span></h3>
                     </div>
                     <div class="bg-purple-100 p-2 sm:p-3 rounded-full text-purple-600">
                         <i class="fas fa-calendar-alt text-lg sm:text-xl"></i>
@@ -247,7 +262,7 @@ if (isset($_GET['cetak'])) {
                 <div class="mt-3">
                     <div class="flex items-center text-xs sm:text-sm text-gray-500">
                         <i class="fas fa-info-circle mr-1"></i>
-                        <span>Rata-rata <?= count($report_data) > 0 ? round($stats['total_berat'] / count($report_data), 1) : 0 ?>kg/bulan</span>
+                        <span>Rata-rata <?= $rata_berat ?>kg/bulan</span>
                     </div>
                 </div>
             </div>
@@ -281,7 +296,7 @@ if (isset($_GET['cetak'])) {
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap"><?= date('F Y', strtotime($report['bulan'].'-01')) ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?= number_format($report['total_berat'], 0, ',', '.') ?></td>
-                                <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">Rp <?= number_format($report['total_debit'], 0, ',', '.') ?></td>
+                                <td class="px-6 py-4 whitespace-nowrap text-green-600 font-medium">Rp <?= isset($report['total_saldo']) ? number_format($report['total_saldo'], 0, ',', '.') : '0' ?></td>
                                 <td class="px-6 py-4 whitespace-nowrap"><?= $report['total_transaksi'] ?>x</td>
                             </tr>
                             <?php endforeach; ?>
