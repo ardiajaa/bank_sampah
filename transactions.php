@@ -45,7 +45,7 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <div class="bg-white rounded-lg shadow-lg overflow-hidden animate__animated animate__fadeIn">
             <div class="p-4 border-b bg-gray-50">
                 <form method="GET" action="transactions.php" class="flex w-full max-w-md mx-auto">
-                    <input type="text" name="search" placeholder="Cari nama nasabah..." 
+                    <input type="text" name="search" placeholder="Cari data transaksi..." 
                            class="px-4 py-2 border border-gray-300 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full text-sm sm:text-base"
                            value="<?= $search ?>">
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-r-lg hover:bg-blue-700 transition">
@@ -77,7 +77,12 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($transactions as $transaction): ?>
+                            <?php 
+                            $saldo = 0; // Inisialisasi saldo awal
+                            foreach ($transactions as $transaction): 
+                                // Update saldo berdasarkan debit dan kredit
+                                $saldo += $transaction['debit'] - $transaction['kredit'];
+                            ?>
                                 <tr class="hover:bg-gray-50 transition duration-150 ease-in-out">
                                     <td class="px-3 sm:px-6 py-4 whitespace-nowrap font-medium"><?= $transaction['nama_user'] ?></td>
                                     <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-gray-500"><?= date('d/m/Y', strtotime($transaction['tanggal'])) ?></td>
@@ -94,7 +99,7 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                         <?= $transaction['kredit'] > 0 ? 'Rp ' . number_format($transaction['kredit'], 0, ',', '.') : '-' ?>
                                     </td>
                                     <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-right font-semibold text-gray-700">
-                                        Rp <?= number_format($transaction['saldo'], 0, ',', '.') ?>
+                                        Rp <?= number_format($saldo, 0, ',', '.') ?>
                                     </td>
                                     <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-center">
                                         <div class="flex justify-center space-x-2 sm:space-x-3">

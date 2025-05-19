@@ -69,7 +69,12 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-200">
                         <?php if (count($transactions) > 0): ?>
-                            <?php foreach ($transactions as $t): ?>
+                            <?php 
+                            $saldo = 0; // Inisialisasi saldo awal
+                            foreach ($transactions as $t): 
+                                // Update saldo berdasarkan debit dan kredit
+                                $saldo += $t['debit'] - $t['kredit'];
+                            ?>
                             <tr class="hover:bg-gray-50 transition-colors">
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm"><?= date('d/m/Y', strtotime($t['tanggal'])) ?></td>
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap">
@@ -79,7 +84,7 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm"><?= $t['jenis'] ?></td>
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm"><?= number_format($t['berat']/1000, 2) ?></td>
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm text-green-600">Rp <?= number_format($t['debit'], 0, ',', '.') ?></td>
-                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium">Rp <?= number_format($t['saldo'], 0, ',', '.') ?></td>
+                                <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm font-medium">Rp <?= number_format($saldo, 0, ',', '.') ?></td>
                                 <td class="px-3 sm:px-6 py-4 whitespace-nowrap text-xs sm:text-sm">
                                     <?php if ($t['verified']): ?>
                                         <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">Terverifikasi</span>

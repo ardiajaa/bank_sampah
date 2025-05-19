@@ -1,8 +1,8 @@
 <?php
 $host = 'localhost';
 $dbname = 'bank_sampah';
-$username = 'root'; // Ganti jika perlu
-$password = ''; // Ganti jika perlu
+$username = 'root';
+$password = '';
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);

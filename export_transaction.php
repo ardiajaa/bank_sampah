@@ -65,7 +65,11 @@ echo '<table>
             <th>Status</th>
         </tr>';
 
+$saldo = 0; // Inisialisasi saldo awal
 foreach ($transactions as $t) {
+    // Update saldo berdasarkan debit dan kredit
+    $saldo += $t['debit'] - $t['kredit'];
+    
     $status = $t['verified'] ? '<span class="text-green">Terverifikasi</span>' : '<span class="text-yellow">Belum Terverifikasi</span>';
     
     echo '<tr>
@@ -75,7 +79,7 @@ foreach ($transactions as $t) {
             <td>'.$t['jenis'].'</td>
             <td>'.number_format($t['berat']/1000, 2).'</td>
             <td>Rp '.number_format($t['debit'], 0, ',', '.').'</td>
-            <td>Rp '.number_format($t['saldo'], 0, ',', '.').'</td>
+            <td>Rp '.number_format($saldo, 0, ',', '.').'</td>
             <td>'.$status.'</td>
         </tr>';
 }

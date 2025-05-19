@@ -124,7 +124,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div>
                         <label class="block text-gray-700 text-sm font-bold mb-2">Saldo Saat Ini</label>
                         <div class="px-3 py-2 bg-gray-100 rounded-md">
-                            Rp <?= number_format($transaction['saldo'], 0, ',', '.') ?>
+                            Rp <?= number_format($transaction['debit'] - $transaction['kredit'], 0, ',', '.') ?>
                         </div>
                     </div>
                 </div>

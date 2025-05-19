@@ -3,7 +3,13 @@ require_once __DIR__ . '/includes/auth_check.php';
 require_once __DIR__ . '/functions.php';
 
 $user = getUserById($_SESSION['user_id']);
-$saldo = getSaldo($_SESSION['user_id']);
+
+// Ambil saldo dengan query yang sama seperti di admin_dashboard.php
+$saldo_query = $pdo->prepare("SELECT COALESCE(SUM(debit), 0) - COALESCE(SUM(kredit), 0) as saldo 
+                            FROM transactions 
+                            WHERE user_id = ?");
+$saldo_query->execute([$_SESSION['user_id']]);
+$saldo = $saldo_query->fetchColumn();
 
 // Ambil statistik tambahan dengan penanganan null
 $stats = $pdo->prepare("SELECT 
@@ -152,19 +158,21 @@ $transactions = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 <td colspan="8" class="px-4 sm:px-6 py-4 text-center text-gray-500">Tidak ada transaksi</td>
                             </tr>
                         <?php else: ?>
-                            <?php foreach ($transactions as $transaction): ?>
+                            <?php 
+                            $saldo = 0; // Inisialisasi saldo awal
+                            foreach ($transactions as $transaction): 
+                                // Update saldo berdasarkan debit dan kredit
+                                $saldo += $transaction['debit'] - $transaction['kredit'];
+                            ?>
                                 <tr class="hover:bg-gray-50 transition">
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap"><?= $transaction['nama_user'] ?></td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap"><?= date('d/m/Y', strtotime($transaction['tanggal'])) ?></td>
                                     <td class="px-4 sm:px-6 py-4 whitespace-nowrap"><?= $transaction['jenis'] ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?= $transaction['nama_user'] ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?= date('d/m/Y', strtotime($transaction['tanggal'])) ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?= $transaction['jenis'] ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap"><?= $transaction['berat'] ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-green-600"><?= $transaction['debit'] > 0 ? 'Rp ' . number_format($transaction['debit'], 0, ',', '.') : '-' ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap text-red-600"><?= $transaction['kredit'] > 0 ? 'Rp ' . number_format($transaction['kredit'], 0, ',', '.') : '-' ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap font-medium">Rp <?= number_format($transaction['saldo'], 0, ',', '.') ?></td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap"><?= $transaction['berat'] ?> gr</td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-green-600"><?= $transaction['debit'] > 0 ? 'Rp ' . number_format($transaction['debit'], 0, ',', '.') : '-' ?></td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-red-600"><?= $transaction['kredit'] > 0 ? 'Rp ' . number_format($transaction['kredit'], 0, ',', '.') : '-' ?></td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap font-medium">Rp <?= number_format($saldo, 0, ',', '.') ?></td>
+                                    <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                                         <a href="edit_transaction.php?id=<?= $transaction['id'] ?>" class="text-blue-600 hover:text-blue-800 mr-2">
                                             <i class="fas fa-edit"></i>
                                         </a>
