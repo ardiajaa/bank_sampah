@@ -48,8 +48,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <style>
-        .register-bg {
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
             background: linear-gradient(135deg, #10B981 0%, #059669 100%);
             background-size: 200% 200%;
             animation: gradientBG 10s ease infinite;
@@ -66,6 +70,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             overflow: hidden;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 1;
         }
         .register-card:hover {
             transform: translateY(-10px);
@@ -103,7 +109,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     </style>
 </head>
-<body class="register-bg min-h-screen flex items-center justify-center p-4">
+<body class="min-h-screen flex items-center justify-center p-4 relative">
+    <div id="particles-js"></div>
     <div class="register-card w-full max-w-md animate__animated animate__fadeInUp">
         <div class="p-8">
             <div class="text-center mb-8">
@@ -150,8 +157,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
                         <input type="password" id="password" name="password" required 
-                               class="input-field w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 relative"
+                               class="input-field w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 relative"
                                placeholder="••••••••">
+                        <i class="fas fa-eye absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-green-600 transition-colors duration-200" 
+                           onclick="togglePasswordVisibility('password', this)"></i>
                     </div>
                 </div>
                 <div class="mb-6">
@@ -159,9 +168,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="relative">
                         <i class="fas fa-lock absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 z-10"></i>
                         <input type="password" id="confirm_password" name="confirm_password" required 
-                               class="input-field w-full pl-10 pr-3 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 relative"
+                               class="input-field w-full pl-10 pr-10 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 relative"
                                placeholder="••••••••">
+                        <i class="fas fa-eye absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 cursor-pointer hover:text-green-600 transition-colors duration-200" 
+                           onclick="togglePasswordVisibility('confirm_password', this)"></i>
                     </div>
+                    <script>
+                        function togglePasswordVisibility(inputId, icon) {
+                            const input = document.getElementById(inputId);
+                            if (input.type === "password") {
+                                input.type = "text";
+                                icon.classList.replace('fa-eye', 'fa-eye-slash');
+                            } else {
+                                input.type = "password";
+                                icon.classList.replace('fa-eye-slash', 'fa-eye');
+                            }
+                        }
+                    </script>
                 </div>
                 <button type="submit" 
                         class="btn-register w-full text-white font-bold py-3 px-4 rounded-lg transition duration-300">
@@ -174,5 +197,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
         </div>
     </div>
+    <script>
+        particlesJS('particles-js', {
+            particles: {
+                number: {
+                    value: 80,
+                    density: {
+                        enable: true,
+                        value_area: 800
+                    }
+                },
+                color: {
+                    value: "#ffffff"
+                },
+                shape: {
+                    type: "circle",
+                    stroke: {
+                        width: 0,
+                        color: "#000000"
+                    },
+                    polygon: {
+                        nb_sides: 5
+                    }
+                },
+                opacity: {
+                    value: 0.5,
+                    random: false,
+                    anim: {
+                        enable: false,
+                        speed: 1,
+                        opacity_min: 0.1,
+                        sync: false
+                    }
+                },
+                size: {
+                    value: 3,
+                    random: true,
+                    anim: {
+                        enable: false,
+                        speed: 40,
+                        size_min: 0.1,
+                        sync: false
+                    }
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 150,
+                    color: "#ffffff",
+                    opacity: 0.4,
+                    width: 1
+                },
+                move: {
+                    enable: true,
+                    speed: 6,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                    out_mode: "bounce",
+                    bounce: false,
+                    attract: {
+                        enable: false,
+                        rotateX: 600,
+                        rotateY: 1200
+                    }
+                }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: {
+                    onhover: {
+                        enable: true,
+                        mode: "repulse"
+                    },
+                    onclick: {
+                        enable: true,
+                        mode: "push"
+                    },
+                    resize: true
+                },
+                modes: {
+                    repulse: {
+                        distance: 100,
+                        duration: 0.4
+                    },
+                    push: {
+                        particles_nb: 4
+                    }
+                }
+            },
+            retina_detect: true
+        });
+    </script>
 </body>
 </html>

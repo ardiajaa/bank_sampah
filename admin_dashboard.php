@@ -99,7 +99,7 @@ $recent_users = $pdo->query("
                         <i class="fas fa-coins text-xl"></i>
                     </div>
                     <div>
-                        <p class="text-gray-500">Total Saldo</p>
+                        <p class="text-gray-500">Total Debit</p>
                         <h3 class="text-2xl font-bold">Rp <?= number_format((float)$stats['total_debit'], 0, ',', '.') ?></h3>
                     </div>
                 </div>
