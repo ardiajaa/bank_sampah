@@ -2,6 +2,16 @@
 
 Proyek ini adalah sistem manajemen bank sampah berbasis web yang dibangun menggunakan PHP Native dengan Laragon, TCPDF untuk generate laporan, dan HTML5 QR Code untuk scan QR Code.
 
+## Login Credentials
+
+### Admin
+- Email: admin@admin.com
+- Password: mahameru
+
+### User/Nasabah
+- Email: ardi@gmail.com
+- Password: mahameru
+
 ## Fitur Utama
 
 ### Fitur Admin
@@ -71,7 +81,7 @@ Proyek ini adalah sistem manajemen bank sampah berbasis web yang dibangun menggu
    - Buka Laragon dan start Apache & MySQL
    - Buka phpMyAdmin melalui Laragon
    - Buat database baru dengan nama `bank_sampah`
-   - Import file `bank_sampah.sql`
+   - Import file `bank_sampah.sql` di \config\bank_sampah.sql
 
 4. Konfigurasi koneksi database:
    Buka file `config.php` di `C:\laragon\www\bank_sampah` dan sesuaikan:
